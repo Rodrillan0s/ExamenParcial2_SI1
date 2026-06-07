@@ -58,7 +58,7 @@ class PostulanteService
                 'id_carrera_1' => $datos['id_carrera_1'],
                 'id_carrera_2' => $datos['id_carrera_2'],
                 'modalidad'    => $datos['modalidad'],
-                'fecha_registro' => now(),
+                'fecha_registro' => $datos['fecha_registro'] ?? now(),
                 'libreta' => false,
                 'ruta_cedula' => $pathCedula,
                 'ruta_bachiller' => $pathBachiller,
@@ -335,8 +335,7 @@ class PostulanteService
                 $errores[] = "Fila " . ($i + 2) . " omitida: El C.I. $ci ya está registrado.";
                 continue;
             }
-            $datos = self::prepararDatosFila($fila);
-
+            $datos = self::prepararDatosFila($fila);            
             try {
                 self::registrarPostulanteBD($datos, $ip, null, null);
                 $registrados++;
@@ -356,6 +355,7 @@ class PostulanteService
     {
         $fechaNacimiento = self::convertirFecha($fila['fecha_nacimiento'] ?? null, '2000-01-01');
         $fechaBachiller = self::convertirFecha($fila['fecha_bachiller'] ?? null, null);
+        $fechaRegistro = self::convertirFecha($fila['fecha_registro'] ?? null, null);
 
         return [
             'ci' => trim($fila['ci'] ?? ''),
@@ -376,8 +376,8 @@ class PostulanteService
             'id_carrera_1' => intval($fila['id_carrera_1'] ?? 1874),
             'id_carrera_2' => intval($fila['id_carrera_2'] ?? null),
             'modalidad' => strtoupper(trim($fila['modalidad'] ?? 'PRESENCIAL')),
-
-            'monto' => 180.00,
+            'fecha_registro' => $fechaRegistro,
+            'monto' => 70.00,
             'metodo_pago' => 'CAJA_FICCT',
             'estado_pago' => 'APROBADO',
             'transaccion_id' => 'CAJA-' . strtoupper(uniqid()),
